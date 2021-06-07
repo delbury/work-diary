@@ -1,0 +1,79 @@
+// 全局通用 class
+.full-w {
+  width: 100% !important;
+}
+
+.full-h {
+  height: 100% !important;
+}
+
+.full {
+  @extend .full-w;
+  @extend .full-h;
+}
+
+// 宽度 20 ~ 200
+@for $i from 1 through 10 {
+  .w-#{$i * 20} {
+    width: $i * 20px !important;
+  }
+}
+
+// 子元素间隔均匀分布
+.evenly-wrapper {
+  > *:not(:last-child) {
+    margin-right: $g-gap-l;
+  }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-box {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+$map-dir: (
+  t: top,
+  b: bottom,
+  l: left,
+  r: right,
+);
+
+@each $key in map-keys($map-dir) {
+  .mg-#{$key} {
+    margin-#{map-get($map-dir, $key)}: $g-gap !important;
+  }
+  .mg-#{$key}-l {
+    margin-#{map-get($map-dir, $key)}: $g-gap-l !important;
+  }
+  .pd-#{$key} {
+    padding-#{map-get($map-dir, $key)}: $g-gap !important;
+  }
+  .pd-#{$key}-l {
+    padding-#{map-get($map-dir, $key)}: $g-gap-l !important;
+  }
+}
+
+.mg {
+  margin: $g-gap !important;
+}
+
+.mg-l {
+  margin: $g-gap-l !important;
+}
+
+.pd {
+  padding: $g-gap !important;
+}
+
+.pd-l {
+  padding: $g-gap-l !important;
+}
