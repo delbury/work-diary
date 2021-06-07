@@ -14,6 +14,10 @@ import {
   ElRadioButton,
   ElSelect,
   ElOption,
+  ElCheckbox,
+  ElTable,
+  ElTableColumn,
+  ElInput,
 } from 'element-plus';
 import lang from 'element-plus/lib/locale/lang/zh-cn';
 
@@ -31,6 +35,10 @@ const Coms = [
   ElRadioButton,
   ElSelect,
   ElOption,
+  ElCheckbox,
+  ElTable,
+  ElTableColumn,
+  ElInput,
 ];
 
 const plugin: Plugin = {

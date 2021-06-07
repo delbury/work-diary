@@ -15,8 +15,8 @@
     >
       <el-radio-button
         v-for="item in monthOptions"
-        :key="item.key"
-        :label="item.key"
+        :key="item.value"
+        :label="item.value"
       >
         {{ item.label }}
       </el-radio-button>
@@ -41,8 +41,8 @@
     <el-radio-group v-model="type">
       <el-radio-button
         v-for="item in diaryOptions"
-        :key="item.key"
-        :label="item.key"
+        :key="item.value"
+        :label="item.value"
       >
         {{ item.label }}
       </el-radio-button>
@@ -52,15 +52,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
-
-// 月份选项
-const MONTHS = Array.from({ length: 12 }, (v, k) => ({ label: `${k + 1}月`, key: k }));
+import { MONTHS } from '/@/lib/const';
 
 // 按钮选项
 const DIARY_TYPES = [
-  { label: '年计划', key: 0 },
-  { label: '月计划', key: 1 },
-  { label: '周计划', key: 2 },
+  { label: '年计划', value: 0 },
+  { label: '月计划', value: 1 },
+  { label: '周计划', value: 2 },
   // { label: '日总结', key: 3 },
 ];
 
@@ -74,8 +72,8 @@ export default defineComponent({
     const year = ref<Date>(new Date());
     const month = ref<number>(0);
     const type = ref<number>(0);
-    const monthOptions = reactive(MONTHS);
-    const diaryOptions = reactive(DIARY_TYPES);
+    const monthOptions = reactive([...MONTHS]);
+    const diaryOptions = reactive([...DIARY_TYPES]);
 
     return {
       week,
