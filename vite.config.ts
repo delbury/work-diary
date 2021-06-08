@@ -23,14 +23,11 @@ export default defineConfig({
     }),
   ],
   css: {
-    // modules
-    // postcss
-    // preprocessorOptions: {
-    //   less: {
-    //     javascriptEnabled: true,
-    //     additionalData: '@import "./src/assets/style/theme.less";', // 全局 style 引入主题变量
-    //   },
-    // },
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@use "./src/assets/style/vars.scss" as *;', // 全局引入变量
+      },
+    },
   },
   resolve: {
     alias: {

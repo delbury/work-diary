@@ -4,14 +4,16 @@ html {
   height: 100vh;
   padding: 0;
   margin: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 #app {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   min-width: 960px;
   height: 100%;
   padding: 20px;
   margin: 0 auto;
-  overflow: auto;
+  overflow: hidden;
 }

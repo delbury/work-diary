@@ -9,6 +9,7 @@ module.exports = {
     'scss/at-import-partial-extension-blacklist': null,
     'selector-max-id': null,
     'scss/at-extend-no-missing-placeholder': null,
+    'selector-class-pattern': null,
   },
   defaultSeverity: 'warning',
 };

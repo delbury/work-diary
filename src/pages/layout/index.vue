@@ -1,6 +1,8 @@
 <template>
   <CompNavbar></CompNavbar>
-  <router-view></router-view>
+  <div class="full-h mg-t-l">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script lang="ts">

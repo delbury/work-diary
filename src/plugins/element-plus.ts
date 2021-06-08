@@ -18,6 +18,8 @@ import {
   ElTable,
   ElTableColumn,
   ElInput,
+  ElScrollbar,
+  ElMessageBox,
 } from 'element-plus';
 import lang from 'element-plus/lib/locale/lang/zh-cn';
 
@@ -39,11 +41,13 @@ const Coms = [
   ElTable,
   ElTableColumn,
   ElInput,
+  ElScrollbar,
+  ElMessageBox,
 ];
 
 const plugin: Plugin = {
   install: (app) => {
-    Coms.forEach(Com => app.component(Com.name, Com));
+    Coms.forEach(Com => app.use(Com));
   },
 };
 export default plugin;

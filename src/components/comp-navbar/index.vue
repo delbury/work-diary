@@ -12,6 +12,7 @@
 
     <el-radio-group
       v-model="month"
+      :disabled="monthDisabled"
     >
       <el-radio-button
         v-for="item in monthOptions"
@@ -38,7 +39,7 @@
     >
     </el-date-picker> -->
 
-    <el-radio-group v-model="type">
+    <el-radio-group v-model="diaryType">
       <el-radio-button
         v-for="item in diaryOptions"
         :key="item.value"
@@ -51,16 +52,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+import { defineComponent, ref, reactive, computed } from 'vue';
 import { MONTHS } from '/@/lib/const';
+import { G } from '/@types/index';
 
 // 按钮选项
-const DIARY_TYPES = [
-  { label: '年计划', value: 0 },
-  { label: '月计划', value: 1 },
-  { label: '周计划', value: 2 },
-  // { label: '日总结', key: 3 },
+const DIARY_TYPES: G.OptionsType = [
+  { label: '年计划', value: 'year' },
+  { label: '月计划', value: 'month' },
+  { label: '周计划', value: 'week' },
+  // { label: '日总结', key: 'day' },
 ];
+
+type DiaryTypeValueType = 'year' | 'month' | 'week' | 'day';
 
 export default defineComponent({
   name: 'CompNavbar',
@@ -71,18 +75,22 @@ export default defineComponent({
     const day = ref<Date>(new Date());
     const year = ref<Date>(new Date());
     const month = ref<number>(0);
-    const type = ref<number>(0);
+    const diaryType = ref<DiaryTypeValueType>('year');
     const monthOptions = reactive([...MONTHS]);
     const diaryOptions = reactive([...DIARY_TYPES]);
+
+    // 月份禁用条件
+    const monthDisabled = computed<boolean>(() => diaryType.value === 'year');
 
     return {
       week,
       day,
       year,
       month,
-      type,
+      diaryType,
       monthOptions,
       diaryOptions,
+      monthDisabled,
     };
   },
 });

@@ -1,0 +1,9 @@
+@use './base.scss';
+
+.el-button.btn-inline {
+  @extend .flex-center;
+
+  min-height: unset;
+  padding: 4px;
+  line-height: 0;
+}
