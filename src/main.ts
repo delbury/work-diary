@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from '/@/router';
+import store, { key } from './store';
 import elements, { globalOptions } from './plugins/element-plus';
 import '/@/assets/style/index.scss';
 
@@ -10,7 +11,7 @@ import CompSelect from '/@/components/comp-select/index.vue';
 // 指令
 import VFocus from '/@/lib/directives/focus';
 
-const app = createApp(App).use(router);
+const app = createApp(App).use(router).use(store, key);
 app.config.globalProperties.$ELEMENT = globalOptions;
 
 app

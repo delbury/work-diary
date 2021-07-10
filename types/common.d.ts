@@ -15,4 +15,9 @@ export declare namespace G {
     store: object;
     _self: object;
   }
+
+  interface BaseTableDataRow {
+    id: string | number;
+    _editing?: boolean;
+  }
 }

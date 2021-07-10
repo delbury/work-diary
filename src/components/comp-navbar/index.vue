@@ -39,7 +39,10 @@
     >
     </el-date-picker> -->
 
-    <el-radio-group v-model="diaryType">
+    <el-radio-group
+      v-model="diaryType"
+      @change="handleDiaryTypeChange"
+    >
       <el-radio-button
         v-for="item in diaryOptions"
         :key="item.value"
@@ -52,35 +55,59 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed } from 'vue';
+import { defineComponent, ref, reactive, computed, watch } from 'vue';
 import { MONTHS } from '/@/lib/const';
 import { G } from '/@types/index';
+import { useRouter } from 'vue-router';
+import { useStore } from '/@/store';
 
 // 按钮选项
 const DIARY_TYPES: G.OptionsType = [
-  { label: '年计划', value: 'year' },
-  { label: '月计划', value: 'month' },
-  { label: '周计划', value: 'week' },
+  { label: '年计划', value: 'years' },
+  { label: '月计划', value: 'months' },
+  { label: '周计划', value: 'weeks' },
   // { label: '日总结', key: 'day' },
 ];
 
-type DiaryTypeValueType = 'year' | 'month' | 'week' | 'day';
+type DiaryTypeValueType = 'years' | 'months' | 'weeks' | 'days';
 
 export default defineComponent({
   name: 'CompNavbar',
   components: {
   },
-  setup() {
+  setup(props, ctx) {
+    const store = useStore();
+    const router = useRouter();
     const week = ref<Date>(new Date());
     const day = ref<Date>(new Date());
     const year = ref<Date>(new Date());
     const month = ref<number>(0);
-    const diaryType = ref<DiaryTypeValueType>('year');
+    let defaultPath: DiaryTypeValueType = 'years';
+    {
+      const cp = router.currentRoute.value.path;
+      for(const d of DIARY_TYPES) {
+        if(new RegExp('^/diary/' + d.value).test(cp)) {
+          defaultPath = d.value as DiaryTypeValueType;
+          break;
+        }
+      }
+    }
+    const diaryType = ref<DiaryTypeValueType>(defaultPath);
     const monthOptions = reactive([...MONTHS]);
     const diaryOptions = reactive([...DIARY_TYPES]);
 
     // 月份禁用条件
-    const monthDisabled = computed<boolean>(() => diaryType.value === 'year');
+    const monthDisabled = computed<boolean>(() => diaryType.value === 'years');
+
+    // 监听路径变换
+    const handleDiaryTypeChange = (ev: DiaryTypeValueType) => {
+      router.push('/diary/' + ev);
+    };
+
+    // 监听参数变化
+    watch([year, month], ([y, m]) => {
+      console.log(y, m);
+    });
 
     return {
       week,
@@ -91,6 +118,7 @@ export default defineComponent({
       monthOptions,
       diaryOptions,
       monthDisabled,
+      handleDiaryTypeChange,
     };
   },
 });

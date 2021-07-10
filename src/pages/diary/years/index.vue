@@ -3,6 +3,52 @@
     ref="refWrapper"
     class="plan-list-wrapper"
   >
+    <el-form
+      :model="searchForm"
+      label-width="auto"
+    >
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <el-form-item
+            label="月份"
+            prop="month"
+          >
+            <comp-select
+              v-model="searchForm.months"
+              class="full-w"
+              :options="monthOptions"
+              multiple
+              collapse-tags
+              placeholder="请选择月份"
+            ></comp-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="10">
+          <el-form-item
+            label="关键词"
+            prop="keyword"
+          >
+            <el-input
+              v-model="searchForm.keyword"
+              class="full-w"
+              placeholder="请输入关键词"
+              clearable
+            ></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="3">
+          <el-checkbox>仅看未分配</el-checkbox>
+        </el-col>
+
+        <el-col :span="5">
+          <el-button type="primary">
+            查询
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-table
       :data="tableData"
       :height="tableHeight"
@@ -15,26 +61,39 @@
       </el-table-column>
 
       <el-table-column
-        width="60"
+        width="70"
         label="操作"
       >
         <template #header>
+          <!-- 添加 -->
           <el-button
             class="btn-inline"
             circle
-            plain
             type="primary"
             icon="el-icon-plus"
             @click="handleAddRow"
           ></el-button>
         </template>
+
         <template #default="data">
+          <!-- 编辑 -->
+          <el-button
+            class="btn-inline"
+            circle
+            plain
+            type="primary"
+            :icon="data.row._editing ? 'el-icon-check' : 'el-icon-edit-outline'"
+            @click="() => {
+              data.row._editing = !data.row._editing;
+            }"
+          ></el-button>
+          <!-- 删除 -->
           <el-button
             class="btn-inline"
             circle
             plain
             type="danger"
-            icon="el-icon-minus"
+            icon="el-icon-delete"
             @click="handleDeleteRow(data)"
           ></el-button>
         </template>
@@ -57,40 +116,55 @@
       >
         <template #default="data">
           <el-input
+            v-if="data.row._editing"
             v-model="data.row.desc"
             type="textarea"
             clearable
             :autosize="{ minRows: 2 }"
           ></el-input>
+          <span v-else>{{ data.row.desc }}</span>
         </template>
       </el-table-column>
 
       <el-table-column
         label="目标项"
         prop="desc"
+        show-overflow-tooltip
       >
         <template #default="data">
           <el-input
+            v-if="data.row._editing"
             v-model="data.row.desc"
             v-focus
             clearable
           ></el-input>
+          <span v-else>{{ data.row.desc }}</span>
         </template>
       </el-table-column>
 
       <el-table-column
         label="月份"
         width="180"
+        prop="months"
+        show-overflow-tooltip
       >
         <template #default="data">
           <comp-select
+            v-if="data.row._editing"
             v-model="data.row.months"
             :options="monthOptions"
             multiple
             collapse-tags
           ></comp-select>
+          <span v-else>{{ monthsFormattor(data.row.months) }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column
+        label="任务组"
+        width="180"
+        prop="group"
+      ></el-table-column>
     </el-table>
   </div>
 </template>
@@ -106,8 +180,13 @@ export default defineComponent({
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
     const tableData = reactive<Pages.DiaryYears.TableDataRows>(
-      Array.from({ length: 5 }, (v, k) => ({ id: uniqueIdGenerator(), desc: '一个小目标' + k, months: [] })),
+      Array.from({ length: 3 }, (v, k) => ({ id: uniqueIdGenerator(), desc: '一个小目标' + k, months: [] })),
     );
+    // 搜索条件
+    const searchForm = reactive({
+      months: [],
+      keyword: '',
+    });
 
     // 表格 wrapper
     const refWrapper = ref<HTMLElement | null>(null);
@@ -119,7 +198,9 @@ export default defineComponent({
       }
     });
 
+
     return {
+      searchForm,
       tableData,
       monthOptions,
       refWrapper,
@@ -136,6 +217,7 @@ export default defineComponent({
           id: uniqueIdGenerator(),
           desc: '',
           month: [],
+          _editing: true,
         });
       },
       // 删除该行
@@ -151,12 +233,19 @@ export default defineComponent({
       },
     };
   },
+  methods: {
+    // 月份格式化
+    monthsFormattor(months: number[]): string {
+      return months.map(it => it + 1).join(',') || '-';
+    },
+  },
 });
 </script>
 
 <style lang="scss">
 .plan-list-wrapper {
   width: 960px;
+  // min-width: 960px;
   height: 100%;
   margin: 0 auto;
 }

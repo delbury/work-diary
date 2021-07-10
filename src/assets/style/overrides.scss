@@ -3,7 +3,12 @@
 .el-button.btn-inline {
   @extend .flex-center;
 
+  display: inline-flex;
   min-height: unset;
-  padding: 4px;
+  padding: 2px;
   line-height: 0;
+}
+
+.el-table__row {
+  height: 42px;
 }

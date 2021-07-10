@@ -20,6 +20,8 @@ import {
   ElInput,
   ElScrollbar,
   ElMessageBox,
+  ElForm,
+  ElFormItem,
 } from 'element-plus';
 import lang from 'element-plus/lib/locale/lang/zh-cn';
 
@@ -43,6 +45,8 @@ const Coms = [
   ElInput,
   ElScrollbar,
   ElMessageBox,
+  ElForm,
+  ElFormItem,
 ];
 
 const plugin: Plugin = {

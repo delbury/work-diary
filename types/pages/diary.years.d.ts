@@ -1,8 +1,7 @@
 import { G } from '../common';
 
 export declare namespace DiaryYears {
-  interface TableDataRow {
-    id: string | number;
+  interface TableDataRow extends G.BaseTableDataRow {
     desc?: string;
     month?: number[];
   }
