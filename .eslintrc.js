@@ -106,5 +106,6 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'vue/html-self-closing': 'off',
+    '@typescript-eslint/no-empty-interface': 'off',
   },
 };

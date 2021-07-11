@@ -11,6 +11,9 @@ import CompSelect from '/@/components/comp-select/index.vue';
 // 指令
 import VFocus from '/@/lib/directives/focus';
 
+// api
+import '/@/api';
+
 const app = createApp(App).use(router).use(store, key);
 app.config.globalProperties.$ELEMENT = globalOptions;
 

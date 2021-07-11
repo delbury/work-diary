@@ -106,8 +106,9 @@ export default defineComponent({
 
     // 监听参数变化
     watch([year, month], ([y, m]) => {
-      console.log(y, m);
-    });
+      store.commit('navbar/setYearSync', y);
+      store.commit('navbar/setMonthSync', m);
+    }, { immediate: true });
 
     return {
       week,

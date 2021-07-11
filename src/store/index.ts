@@ -1,13 +1,22 @@
 import { InjectionKey } from 'vue';
-import { Store, createStore, useStore as useStoreOrigin } from 'vuex';
-import { State } from '/@types/store';
+import {
+  Store,
+  createStore,
+  useStore as useStoreOrigin,
+  StoreOptions,
+} from 'vuex';
+import { RootState, StateTree } from '/@types/store';
+import NavbarModule from './navbar';
 
-export const key: InjectionKey<Store<State>> = Symbol();
+export const key: InjectionKey<Store<StateTree>> = Symbol();
+export const useStore = (): Store<StateTree> => useStoreOrigin(key);
 
-export const useStore = (): Store<State> => useStoreOrigin(key);
-
-export default createStore<State>({
+const vuexOptions: StoreOptions<RootState> = {
   state: {
-    year: '',
   },
-});
+  modules: {
+    navbar: NavbarModule,
+  },
+};
+
+export default createStore<RootState>(vuexOptions);

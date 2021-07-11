@@ -39,7 +39,13 @@
         </el-col>
 
         <el-col :span="3">
-          <el-checkbox>仅看未分配</el-checkbox>
+          <el-checkbox
+            v-model="searchForm.onlyUnassigned"
+            :true-label="1"
+            :false-label="0"
+          >
+            仅看未分配
+          </el-checkbox>
         </el-col>
 
         <el-col :span="5">
@@ -170,13 +176,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, onMounted, getCurrentInstance } from 'vue';
+import {
+  defineComponent,
+  reactive,
+  ref,
+  onMounted,
+  getCurrentInstance,
+} from 'vue';
+import { useStore } from '/@/store';
 import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
+import api from '/@/api';
 
 export default defineComponent({
   setup(props, ctx) {
+    const store = useStore();
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
     const tableData = reactive<Pages.DiaryYears.TableDataRows>(
@@ -184,8 +199,10 @@ export default defineComponent({
     );
     // 搜索条件
     const searchForm = reactive({
-      months: [],
-      keyword: '',
+      onlyUnassigned: 0, // 仅看未分配月份
+      months: [], // 月份
+      keyword: '', // 关键词
+      year: store.state.navbar.year, // 年份
     });
 
     // 表格 wrapper
@@ -198,6 +215,8 @@ export default defineComponent({
       }
     });
 
+    // 查询年计划列表
+    api.searchYearPlans();
 
     return {
       searchForm,
