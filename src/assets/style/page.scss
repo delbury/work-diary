@@ -1,0 +1,18 @@
+@use './vars.scss' as *;
+
+.subpage {
+  box-sizing: border-box;
+  flex: 1;
+  padding: $g-gap-l 0;
+  overflow: auto;
+}
+
+.sub-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 960px;
+  // min-width: 960px;
+  height: 100%;
+  margin: 0 auto;
+  overflow: auto;
+}

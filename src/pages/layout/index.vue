@@ -1,6 +1,6 @@
 <template>
   <CompNavbar></CompNavbar>
-  <div class="full-h mg-t-l">
+  <div class="subpage">
     <router-view></router-view>
   </div>
 </template>

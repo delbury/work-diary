@@ -1,6 +1,6 @@
 <template>
   <el-row
-    class="evenly-wrapper flex-center"
+    class="evenly-wrapper flex-center border-b pd-b"
   >
     <el-date-picker
       v-model="year"
@@ -66,7 +66,7 @@ const DIARY_TYPES: G.OptionsType = [
   { label: '年计划', value: 'years' },
   { label: '月计划', value: 'months' },
   { label: '周计划', value: 'weeks' },
-  // { label: '日总结', key: 'day' },
+  { label: '日总结', value: 'days' },
 ];
 
 type DiaryTypeValueType = 'years' | 'months' | 'weeks' | 'days';
@@ -80,9 +80,17 @@ export default defineComponent({
     const router = useRouter();
     const week = ref<Date>(new Date());
     const day = ref<Date>(new Date());
-    const year = ref<Date>(new Date());
-    const month = ref<number>(0);
-    let defaultPath: DiaryTypeValueType = 'years';
+    const year = computed({
+      get: () => store.state.navbar.year,
+      set: (val) => store.commit('navbar/setYearSync', val),
+    });
+    const month = computed({
+      get: () => store.state.navbar.month,
+      set: (val) => store.commit('navbar/setMonthSync', val),
+    });
+
+
+    let defaultPath: DiaryTypeValueType = 'months';
     {
       const cp = router.currentRoute.value.path;
       for(const d of DIARY_TYPES) {

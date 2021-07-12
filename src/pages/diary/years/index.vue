@@ -1,13 +1,16 @@
 <template>
   <div
     ref="refWrapper"
-    class="plan-list-wrapper"
+    class="sub-page-wrapper"
   >
     <el-form
       :model="searchForm"
       label-width="auto"
     >
-      <el-row :gutter="20">
+      <el-row
+        :gutter="20"
+        class="mg-no"
+      >
         <el-col :span="6">
           <el-form-item
             label="月份"
@@ -24,7 +27,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item
             label="关键词"
             prop="keyword"
@@ -38,7 +41,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="3">
+        <el-col :span="4">
           <el-checkbox
             v-model="searchForm.onlyUnassigned"
             :true-label="1"
@@ -48,14 +51,19 @@
           </el-checkbox>
         </el-col>
 
-        <el-col :span="5">
+        <el-col
+          :span="2"
+          class="text-right"
+        >
           <el-button type="primary">
             查询
           </el-button>
         </el-col>
       </el-row>
     </el-form>
+
     <el-table
+      class="flex-box border-t"
       :data="tableData"
       :height="tableHeight"
       row-key="id"
@@ -78,6 +86,14 @@
             type="primary"
             icon="el-icon-plus"
             @click="handleAddRow"
+          ></el-button>
+
+          <!-- 批量删除 -->
+          <el-button
+            class="btn-inline"
+            circle
+            type="danger"
+            icon="el-icon-delete"
           ></el-button>
         </template>
 
@@ -182,21 +198,21 @@ import {
   ref,
   onMounted,
   getCurrentInstance,
+  nextTick,
 } from 'vue';
 import { useStore } from '/@/store';
 import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
 import api from '/@/api';
+import { ElTable } from 'element-plus';
 
 export default defineComponent({
   setup(props, ctx) {
     const store = useStore();
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
-    const tableData = reactive<Pages.DiaryYears.TableDataRows>(
-      Array.from({ length: 3 }, (v, k) => ({ id: uniqueIdGenerator(), desc: '一个小目标' + k, months: [] })),
-    );
+    const tableData = reactive<Pages.DiaryYears.TableDataRows>([]);
     // 搜索条件
     const searchForm = reactive({
       onlyUnassigned: 0, // 仅看未分配月份
@@ -216,7 +232,10 @@ export default defineComponent({
     });
 
     // 查询年计划列表
-    api.searchYearPlans();
+    api.searchYearPlans().then((res) => {
+      tableData.length = 0;
+      tableData.push(...res.data.data);
+    });
 
     return {
       searchForm,
@@ -237,6 +256,7 @@ export default defineComponent({
           desc: '',
           month: [],
           _editing: true,
+          year: (store.state.navbar.year ?? new Date()).getFullYear(),
         });
       },
       // 删除该行
@@ -260,12 +280,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.plan-list-wrapper {
-  width: 960px;
-  // min-width: 960px;
-  height: 100%;
-  margin: 0 auto;
-}
-</style>

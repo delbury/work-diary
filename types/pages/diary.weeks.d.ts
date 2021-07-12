@@ -1,10 +1,11 @@
 import { G } from '../common';
 
-export declare namespace DiaryYears {
+export declare namespace DiaryWeeks {
   interface TableDataRow extends G.BaseTableDataRow {
     desc?: string;
-    month?: number[];
-    year: number;
+    week?: string;
+    monthRemark?: string;
+    yearPlanId: string;
   }
 
   type TableDataRows = TableDataRow[]

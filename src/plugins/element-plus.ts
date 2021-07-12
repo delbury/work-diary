@@ -22,8 +22,10 @@ import {
   ElMessageBox,
   ElForm,
   ElFormItem,
+  ElCalendar,
 } from 'element-plus';
 import lang from 'element-plus/lib/locale/lang/zh-cn';
+import 'dayjs/locale/zh-cn';
 
 locale(lang);
 const Coms = [
@@ -47,6 +49,7 @@ const Coms = [
   ElMessageBox,
   ElForm,
   ElFormItem,
+  ElCalendar,
 ];
 
 const plugin: Plugin = {

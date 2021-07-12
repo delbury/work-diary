@@ -4,8 +4,8 @@ import { RootState, NavbarState } from '/@types/store';
 const module: Module<NavbarState, RootState> = {
   namespaced: true,
   state: {
-    year: null,
-    month: 0,
+    year: new Date(),
+    month: new Date().getMonth(),
   },
   mutations: {
     setYearSync(state, payload: Date) {
@@ -13,6 +13,10 @@ const module: Module<NavbarState, RootState> = {
     },
     setMonthSync(state, payload: number) {
       state.month = payload;
+    },
+    setDateSync(state, payload: Date) {
+      state.year = payload;
+      state.month = payload.getMonth();
     },
   },
 };

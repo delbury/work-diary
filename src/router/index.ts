@@ -16,17 +16,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'years',
         component: () => import('/@/pages/diary/years/index.vue'),
-
       },
       {
         path: 'months',
         component: () => import('/@/pages/diary/months/index.vue'),
-
       },
       {
         path: 'weeks',
         component: () => import('/@/pages/diary/weeks/index.vue'),
-
+      },
+      {
+        path: 'days',
+        component: () => import('/@/pages/diary/days/index.vue'),
       },
     ],
     redirect: '/diary/years',

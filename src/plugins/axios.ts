@@ -1,5 +1,4 @@
-import axios from 'axios';
-export { APIHandler } from '/@types/plugins/axios';
+import axios, { AxiosResponse } from 'axios';
 
 const instance = axios.create({
   timeout: 6000,
@@ -23,4 +22,5 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
+export type GetResultType = Promise<AxiosResponse>;
 export default instance;
