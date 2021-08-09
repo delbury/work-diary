@@ -101,10 +101,6 @@
         width="50"
         label="序号"
       >
-        <!-- TODO: 待组件 bug 修复 -->
-        <template #default="data">
-          <span>{{ indexMethod(data) }}</span>
-        </template>
       </el-table-column>
 
       <el-table-column
@@ -203,7 +199,7 @@ export default defineComponent({
 
 
     // 查询年计划列表
-    api.searchYearPlans();
+    // api.searchYearPlans();
 
     return {
       searchForm,
@@ -211,13 +207,6 @@ export default defineComponent({
       monthOptions,
       refWrapper,
       tableHeight,
-      // 表格序号，自定义（临时处理 el-table 的 bug）
-      indexMethod: (data: Pages.DiaryYears.SlotScope) => {
-        if(data.$index > -1) {
-          return tableData.findIndex(it => it === data.row) + 1;
-        }
-      },
-
       // 删除该行
       handleDeleteRow: (data: Pages.DiaryYears.SlotScope) => {
         that?.appContext.config.globalProperties.$confirm('是否移除当月该计划？', '提示', {

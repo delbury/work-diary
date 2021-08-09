@@ -1,7 +1,7 @@
 import 'element-plus/packages/theme-chalk/src/base.scss';
 import { Plugin } from 'vue';
 import {
-  locale,
+  // locale,
   ElButton,
   ElHeader,
   ElMain,
@@ -24,10 +24,10 @@ import {
   ElFormItem,
   ElCalendar,
 } from 'element-plus';
-import lang from 'element-plus/lib/locale/lang/zh-cn';
-import 'dayjs/locale/zh-cn';
+// import lang from 'element-plus/lib/locale/lang/zh-cn';
+// import 'dayjs/locale/zh-cn';
+// locale(lang);
 
-locale(lang);
 const Coms = [
   ElButton,
   ElHeader,

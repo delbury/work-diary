@@ -232,10 +232,10 @@ export default defineComponent({
     });
 
     // 查询年计划列表
-    api.searchYearPlans().then((res) => {
-      tableData.length = 0;
-      tableData.push(...res.data.data);
-    });
+    // api.searchYearPlans().then((res) => {
+    //   tableData.length = 0;
+    //   tableData.push(...res.data.data);
+    // });
 
     return {
       searchForm,

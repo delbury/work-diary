@@ -22,5 +22,4 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-export type GetResultType = Promise<AxiosResponse>;
 export default instance;
