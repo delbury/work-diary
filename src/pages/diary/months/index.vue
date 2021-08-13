@@ -135,7 +135,7 @@
 
       <el-table-column
         width="180"
-        label="周"
+        label="选择周"
         prop="week"
         show-overflow-tooltip
       >
@@ -147,6 +147,7 @@
             type="week"
             format="gggg 第 ww 周"
             placeholder="选择周"
+            :disabled-date="(date) => disabledWeekDate(date, data)"
           >
           </el-date-picker>
           <span v-else>{{ weekFormattor(data.row.week) }}</span>
@@ -167,16 +168,16 @@ import {
 import { useStore } from '/@/store';
 import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
-import { uniqueIdGenerator } from '/@/lib/util';
+import { uniqueIdGenerator, weekFormattor } from '/@/lib/util';
 import api from '/@/api';
-import { ElTable } from 'element-plus';
+import { useTableHeight } from '/@/pages/common/mixins/table-mixin';
 
 export default defineComponent({
   setup(props, ctx) {
     const store = useStore();
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
-    const tableData = reactive<Pages.DiaryWeeks.TableDataRows>(
+    const tableData = reactive<Pages.DiaryMonths.TableDataRows>(
       Array.from({ length: 5 }, (v, k) => ({ id: uniqueIdGenerator(), yearPlanId: '1', desc: '一个小目标' + k, months: [] })),
     );
     // 搜索条件
@@ -187,15 +188,7 @@ export default defineComponent({
       year: store.state.navbar.year, // 年份
     });
 
-    // 表格 wrapper
-    const refWrapper = ref<HTMLElement | null>(null);
-    const tableHeight = ref<number | null>(null);
-    onMounted(() => {
-      if(refWrapper.value) {
-        const rect = (refWrapper.value).getBoundingClientRect();
-        tableHeight.value = rect.height;
-      }
-    });
+    const [refWrapper, tableHeight] = useTableHeight();
 
 
     // 查询年计划列表
@@ -218,21 +211,16 @@ export default defineComponent({
           }
         }).catch(() => null);
       },
+      // 选择周禁用日期
+      disabledWeekDate: (date: Date, data: Pages.DiaryWeeks.TableDataRow) => {
+        const year = store.state.navbar.year?.getFullYear();
+        const month = store.state.navbar.month;
+        return date.getMonth() !== month || date.getFullYear() !== year;
+      },
     };
   },
   methods: {
-    // 周格式化
-    weekFormattor(dateStr: string): string {
-      if(!dateStr) return '-';
-      const date = new Date(dateStr);
-      const dateStart = new Date(dateStr);
-      dateStart.setMonth(0);
-      dateStart.setDate(1);
-      const d = Math.round((date.valueOf() - dateStart.valueOf()) / 86400000);
-      const week = Math.ceil((d + dateStart.getDay() - 1) / 7);
-      const year = date.getFullYear();
-      return `${year} 第 ${week} 周`;
-    },
+    weekFormattor,
   },
 });
 </script>

@@ -205,7 +205,7 @@ import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
 import api from '/@/api';
-import { ElTable } from 'element-plus';
+import { useTableHeight } from '/@/pages/common/mixins/table-mixin';
 
 export default defineComponent({
   setup(props, ctx) {
@@ -221,15 +221,7 @@ export default defineComponent({
       year: store.state.navbar.year, // 年份
     });
 
-    // 表格 wrapper
-    const refWrapper = ref<HTMLElement | null>(null);
-    const tableHeight = ref<number | null>(null);
-    onMounted(() => {
-      if(refWrapper.value) {
-        const rect = (refWrapper.value).getBoundingClientRect();
-        tableHeight.value = rect.height;
-      }
-    });
+    const [refWrapper, tableHeight] = useTableHeight();
 
     // 查询年计划列表
     // api.searchYearPlans().then((res) => {
