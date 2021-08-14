@@ -140,7 +140,7 @@
         show-overflow-tooltip
       >
         <template #default="data">
-          <el-date-picker
+          <!-- <el-date-picker
             v-if="data.row._editing"
             v-model="data.row.week"
             class="full-w"
@@ -149,8 +149,22 @@
             placeholder="选择周"
             :disabled-date="(date) => disabledWeekDate(date, data)"
           >
-          </el-date-picker>
-          <span v-else>{{ weekFormattor(data.row.week) }}</span>
+          </el-date-picker> -->
+          <el-select
+            v-if="data.row._editing"
+            v-model="data.row.weeks"
+            class="full-w"
+            multiple
+            collapse-tags
+          >
+            <el-option
+              v-for="it in weeksOptions"
+              :key="it.date"
+              :label="it.label"
+              :value="it.value"
+            ></el-option>
+          </el-select>
+          <!-- <span v-else>{{ weekFormattor(data.row.week) }}</span> -->
         </template>
       </el-table-column>
     </el-table>
@@ -164,13 +178,14 @@ import {
   ref,
   onMounted,
   getCurrentInstance,
+  computed,
 } from 'vue';
 import { useStore } from '/@/store';
 import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
-import { uniqueIdGenerator, weekFormattor } from '/@/lib/util';
+import { uniqueIdGenerator, weekFormattor, getCurrentMonthWeeks } from '/@/lib/util';
 import api from '/@/api';
-import { useTableHeight } from '/@/pages/common/mixins/table-mixin';
+import { useTableHeight } from '/@/pages/common/mixins';
 
 export default defineComponent({
   setup(props, ctx) {
@@ -189,12 +204,15 @@ export default defineComponent({
     });
 
     const [refWrapper, tableHeight] = useTableHeight();
-
+    const weeksOptions = computed(() => {
+      return getCurrentMonthWeeks(store.state.navbar.year as Date, store.state.navbar.month);
+    });
 
     // 查询年计划列表
     // api.searchYearPlans();
 
     return {
+      weeksOptions,
       searchForm,
       tableData,
       monthOptions,

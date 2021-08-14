@@ -3,7 +3,7 @@ import { G } from '../common';
 export declare namespace DiaryYears {
   interface TableDataRow extends G.BaseTableDataRow {
     desc?: string;
-    month?: number[];
+    months?: number[];
     year: number;
   }
 

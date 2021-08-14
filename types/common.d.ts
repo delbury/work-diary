@@ -17,7 +17,7 @@ export declare namespace G {
   }
 
   interface BaseTableDataRow {
-    id: string | number;
+    id: string;
     _editing?: boolean;
   }
 }

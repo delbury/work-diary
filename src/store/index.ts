@@ -9,7 +9,8 @@ import { RootState, StateTree } from '/@types/store';
 import NavbarModule from './navbar';
 
 export const key: InjectionKey<Store<StateTree>> = Symbol();
-export const useStore = (): Store<StateTree> => useStoreOrigin(key);
+export type StoreType = Store<StateTree>
+export const useStore = ():StoreType => useStoreOrigin(key);
 
 const vuexOptions: StoreOptions<RootState> = {
   state: {

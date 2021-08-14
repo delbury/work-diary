@@ -49,7 +49,7 @@ export const dateFormattor = (dateParam: DateParam): string => {
 };
 
 // 计算当前月包含的周
-interface WeekItem {
+export interface WeekItem {
   startDate: Date;
   endDate: Date;
   year: number;

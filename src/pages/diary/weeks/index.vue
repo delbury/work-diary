@@ -112,13 +112,12 @@
 <script lang="ts">
 import { defineComponent, computed, ref, watch, reactive } from 'vue';
 import { useStore } from '/@/store';
-import { getWeek, dateFormattor, ONE_DAY_TIME, getCurrentMonthWeeks } from '/@/lib/util';
+import { getWeek, dateFormattor, ONE_DAY_TIME, getCurrentMonthWeeks, WeekItem } from '/@/lib/util';
 import { Interface } from 'readline';
-import { useTableHeight } from '/@/pages/common/mixins/table-mixin';
+import { useTableHeight } from '/@/pages/common/mixins';
 import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
 
-type WeekItem = ReturnType<typeof getCurrentMonthWeeks>[0];
 
 export default defineComponent({
   setup() {

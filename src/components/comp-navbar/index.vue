@@ -7,6 +7,8 @@
       class="w-100"
       type="year"
       placeholder="选择年"
+      :clearable="false"
+      :editable="false"
     >
     </el-date-picker>
 

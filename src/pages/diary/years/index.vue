@@ -55,7 +55,10 @@
           :span="2"
           class="text-right"
         >
-          <el-button type="primary">
+          <el-button
+            type="primary"
+            @click="fetchList"
+          >
             查询
           </el-button>
         </el-col>
@@ -106,6 +109,9 @@
             type="primary"
             :icon="data.row._editing ? 'el-icon-check' : 'el-icon-edit-outline'"
             @click="() => {
+              if(data.row._editing) {
+                updateYearPlan(data.row)
+              }
               data.row._editing = !data.row._editing;
             }"
           ></el-button>
@@ -149,6 +155,12 @@
       </el-table-column>
 
       <el-table-column
+        label="任务年度"
+        prop="year"
+      >
+      </el-table-column>
+
+      <el-table-column
         label="目标项"
         prop="desc"
         show-overflow-tooltip
@@ -165,7 +177,7 @@
       </el-table-column>
 
       <el-table-column
-        label="月份"
+        label="指定月份"
         width="180"
         prop="months"
         show-overflow-tooltip
@@ -182,11 +194,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column
+      <!-- <el-table-column
         label="任务组"
         width="180"
         prop="group"
-      ></el-table-column>
+      ></el-table-column> -->
     </el-table>
   </div>
 </template>
@@ -205,7 +217,7 @@ import { MONTHS } from '/@/lib/const';
 import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
 import api from '/@/api';
-import { useTableHeight } from '/@/pages/common/mixins/table-mixin';
+import { useTableHeight, useNavbarChange } from '/@/pages/common/mixins';
 
 export default defineComponent({
   setup(props, ctx) {
@@ -224,12 +236,29 @@ export default defineComponent({
     const [refWrapper, tableHeight] = useTableHeight();
 
     // 查询年计划列表
-    // api.searchYearPlans().then((res) => {
-    //   tableData.length = 0;
-    //   tableData.push(...res.data.data);
-    // });
+    const fetchList = () => {
+      api.searchYearPlans({
+        year: store.state.navbar.year?.getFullYear(),
+      }).then((res) => {
+        tableData.length = 0;
+        tableData.push(...res.data.data);
+      });
+    };
+    fetchList();
+
+    // 监听日期变换
+    useNavbarChange(store, (date, month) => {
+      fetchList();
+    });
+
+    // 更新年计划
+    const updateYearPlan = (data: Pages.DiaryYears.TableDataRow) => {
+      api.updateYearPlan(data.id, data);
+    };
 
     return {
+      updateYearPlan,
+      fetchList,
       searchForm,
       tableData,
       monthOptions,
@@ -246,7 +275,7 @@ export default defineComponent({
         tableData.push({
           id: uniqueIdGenerator(),
           desc: '',
-          month: [],
+          months: [],
           _editing: true,
           year: (store.state.navbar.year ?? new Date()).getFullYear(),
         });
