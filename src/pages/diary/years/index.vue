@@ -241,7 +241,7 @@ export default defineComponent({
         year: store.state.navbar.year?.getFullYear(),
       }).then((res) => {
         tableData.length = 0;
-        tableData.push(...res.data.data);
+        tableData.push(...res.data.body?.data || []);
       });
     };
     fetchList();
@@ -284,7 +284,8 @@ export default defineComponent({
       handleDeleteRow: (data: Pages.DiaryYears.SlotScope) => {
         that?.appContext.config.globalProperties.$confirm('是否删除该计划？', '提示', {
           type: 'warning',
-        }).then(() => {
+        }).then(async () => {
+          const res = await api.deleteYearPlan(data.row.id);
           const index = tableData.findIndex(it => it.id === data.row.id);
           if(index > -1) {
             tableData.splice(index, 1);

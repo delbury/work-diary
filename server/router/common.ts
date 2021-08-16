@@ -1,9 +1,18 @@
-export const SUCCESS_RES = {
-  code: 200,
-  msg: '操作成功',
-};
+import type { Server } from '/@types/server';
 
-export const FAIL_RES = {
-  code: 200,
-  msg: '操作失败，查询不到当前信息',
-};
+// 请求成功的返回数据
+export function getSuccessedBody<T>(data?: T): Server.ResponseType<T> {
+  return {
+    code: 200,
+    msg: '操作成功',
+    body: data,
+  };
+}
+
+// 请求失败的返回数据
+export function getFailedBody(msg = '操作失败') {
+  return {
+    code: 400,
+    msg,
+  };
+}

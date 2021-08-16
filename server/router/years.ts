@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import type { Server } from '/@types/server';
-import { SUCCESS_RES, FAIL_RES } from './common.js';
+import { getSuccessedBody, getFailedBody } from './common.js';
 
 const router = new Router();
 
@@ -33,27 +33,37 @@ router
   .get('/list', async (ctx) => {
     const year = Number(ctx.query.year) ?? '';
     const data = list.filter(item => item.year === year);
-    const res: Server.YearsPlanPaging = {
+    const res: Server.YearsPlanPaging['body'] = {
       total: data.length,
       data,
     };
-    ctx.body = res;
+    ctx.body = getSuccessedBody(res);
   })
   // 添加
   .post('/list', async (ctx) => {
   })
   // 修改
   .put('/list/:id', async (ctx) => {
-    console.log(ctx.params);
-    const index = list.findIndex(it => it.id === ctx.params.id);
-    if(index > -1) {
-      list[index] = { ...list[index] };
-      ctx.body = SUCCESS_RES;
+    const item = list.find(it => it.id === ctx.params.id);
+    if(item) {
+      const reqBody = ctx.request.body;
+      item.desc = reqBody.desc ?? '';
+      item.months = reqBody.months ?? [];
+      item.year = reqBody.year ?? '';
+      ctx.body = getSuccessedBody();
     } else {
-      ctx.body = FAIL_RES;
+      ctx.body = getFailedBody();
     }
   })
   // 删除
-  .delete('/list/:id', async (ctx) => {});
+  .delete('/list/:id', async (ctx) => {
+    const index = list.findIndex(it => it.id === ctx.params.id);
+    if(index > -1) {
+      list.splice(index, 1);
+      ctx.body = getSuccessedBody();
+    } else {
+      ctx.body = getFailedBody();
+    }
+  });
 
 export default router;

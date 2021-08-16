@@ -10,8 +10,14 @@ export declare namespace Server {
     data: T[]; // 数据列表
   }
 
+  // 接口返回数据类型
+  export interface ResponseType<T> {
+    code: number;
+    msg: string;
+    body?: T;
+  }
 
   // 年计划行数据
   export type YearsPlanRow = Pages.DiaryYears.TableDataRow;
-  export type YearsPlanPaging = BasePaging<Pages.DiaryYears.TableDataRow>;
+  export type YearsPlanPaging = ResponseType<BasePaging<Pages.DiaryYears.TableDataRow>>;
 }
