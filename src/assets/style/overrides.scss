@@ -1,4 +1,5 @@
 @use './base.scss';
+@use './vars.scss' as *;
 
 .el-button.btn-inline {
   @extend .flex-center;
@@ -11,4 +12,21 @@
 
 .el-table__row {
   height: 42px;
+}
+
+.el-dialog {
+  .el-dialog__header {
+    border-bottom: $border;
+  }
+  .el-dialog__footer {
+    border-top: $border;
+  }
+}
+
+.el-form {
+  .el-form-item__content {
+    >* {
+      width: 100%;
+    }
+  }
 }

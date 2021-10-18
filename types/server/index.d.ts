@@ -18,6 +18,7 @@ export declare namespace Server {
   }
 
   // 年计划行数据
+  export type YearsPlanRowRequest = Pages.DiaryYears.TableDataRowBase;
   export type YearsPlanRow = Pages.DiaryYears.TableDataRow;
   export type YearsPlanPaging = ResponseType<BasePaging<Pages.DiaryYears.TableDataRow>>;
 }

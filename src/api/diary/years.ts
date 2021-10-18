@@ -11,3 +11,6 @@ export const updateYearPlan = (id: string, data: object) => http.put(BASE + '/ye
 
 // 删除年计划
 export const deleteYearPlan = (id: string) => http.delete(BASE + '/years/list/' + id);
+
+// 添加年计划
+export const addYearPlan = (data?: object) => http.post(BASE + '/years/list', data);

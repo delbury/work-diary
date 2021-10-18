@@ -1,11 +1,12 @@
 import { G } from '../common';
 
 export declare namespace DiaryYears {
-  interface TableDataRow extends G.BaseTableDataRow {
+  interface TableDataRowBase {
     desc?: string;
     months?: number[];
     year: number;
   }
+  interface TableDataRow extends G.BaseTableDataRow, TableDataRowBase {}
 
   type TableDataRows = TableDataRow[]
 

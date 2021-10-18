@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { ElMessage } from 'element-plus';
 
 const instance = axios.create({
   timeout: 6000,
@@ -19,6 +20,11 @@ instance.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
   // 对响应错误做点什么
+  const msg = error?.response?.data?.msg;
+  if(msg) {
+    ElMessage.error(msg);
+  }
+
   return Promise.reject(error);
 });
 

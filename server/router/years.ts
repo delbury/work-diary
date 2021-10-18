@@ -1,6 +1,7 @@
 import Router from 'koa-router';
 import type { Server } from '/@types/server';
-import { getSuccessedBody, getFailedBody } from './common.js';
+import { setSuccessedBody, setFailedBody, setFailedBodySearch, validateRequiredFields } from './common.js';
+import { v4 } from 'uuid';
 
 const router = new Router();
 
@@ -32,15 +33,37 @@ router
   // 查询
   .get('/list', async (ctx) => {
     const year = Number(ctx.query.year) ?? '';
-    const data = list.filter(item => item.year === year);
+    const months = new Set(ctx.query.months ? ((ctx.query.months as string).split(',').map(it => +it)) : []);
+    const keyword = (ctx.query.keyword ?? '') as string;
+
+    const data = list.filter(item => {
+      let flag = item.year === year;
+      if(flag && months.size) {
+        flag = flag && !!item.months?.some(it => months.has(it));
+      }
+      if(flag && keyword) {
+        flag = flag && !!item.desc?.includes(keyword);
+      }
+      return flag;
+    });
     const res: Server.YearsPlanPaging['body'] = {
       total: data.length,
       data,
     };
-    ctx.body = getSuccessedBody(res);
+    setSuccessedBody(ctx, res);
   })
   // 添加
   .post('/list', async (ctx) => {
+    const data = (ctx.request.body) as Server.YearsPlanRowRequest;
+    if(validateRequiredFields(ctx, data, ['year', 'desc'])) {
+      list.push({
+        year: data.year,
+        desc: data.desc,
+        months: data.months,
+        id: v4(),
+      });
+      setSuccessedBody(ctx);
+    }
   })
   // 修改
   .put('/list/:id', async (ctx) => {
@@ -50,9 +73,9 @@ router
       item.desc = reqBody.desc ?? '';
       item.months = reqBody.months ?? [];
       item.year = reqBody.year ?? '';
-      ctx.body = getSuccessedBody();
+      setSuccessedBody(ctx);
     } else {
-      ctx.body = getFailedBody();
+      setFailedBodySearch(ctx);
     }
   })
   // 删除
@@ -60,9 +83,9 @@ router
     const index = list.findIndex(it => it.id === ctx.params.id);
     if(index > -1) {
       list.splice(index, 1);
-      ctx.body = getSuccessedBody();
+      setSuccessedBody(ctx);
     } else {
-      ctx.body = getFailedBody();
+      setFailedBodySearch(ctx);
     }
   });
 

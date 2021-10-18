@@ -200,6 +200,11 @@
         prop="group"
       ></el-table-column> -->
     </el-table>
+
+    <CreateDialog
+      v-model="visibleCreateDialog"
+      @on-done="fetchList"
+    ></CreateDialog>
   </div>
 </template>
 
@@ -218,13 +223,16 @@ import { Pages } from '/@types/index';
 import { uniqueIdGenerator } from '/@/lib/util';
 import api from '/@/api';
 import { useTableHeight, useNavbarChange } from '/@/pages/common/mixins';
+import CreateDialog from './create-dialog.vue';
 
 export default defineComponent({
+  components: { CreateDialog },
   setup(props, ctx) {
     const store = useStore();
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
     const tableData = reactive<Pages.DiaryYears.TableDataRows>([]);
+
     // 搜索条件
     const searchForm = reactive({
       onlyUnassigned: 0, // 仅看未分配月份
@@ -239,6 +247,8 @@ export default defineComponent({
     const fetchList = () => {
       api.searchYearPlans({
         year: store.state.navbar.year?.getFullYear(),
+        months: searchForm.months.join(','),
+        keyword: searchForm.keyword,
       }).then((res) => {
         tableData.length = 0;
         tableData.push(...res.data.body?.data || []);
@@ -256,7 +266,11 @@ export default defineComponent({
       api.updateYearPlan(data.id, data);
     };
 
+    // 创建弹框
+    const visibleCreateDialog = ref(false);
+
     return {
+      visibleCreateDialog,
       updateYearPlan,
       fetchList,
       searchForm,
@@ -272,13 +286,15 @@ export default defineComponent({
       },
       // 添加一行
       handleAddRow: () => {
-        tableData.push({
-          id: uniqueIdGenerator(),
-          desc: '',
-          months: [],
-          _editing: true,
-          year: (store.state.navbar.year ?? new Date()).getFullYear(),
-        });
+        // 行内添加
+        // tableData.push({
+        //   id: uniqueIdGenerator(),
+        //   desc: '',
+        //   months: [],
+        //   _editing: true,
+        //   year: (store.state.navbar.year ?? new Date()).getFullYear(),
+        // });
+        visibleCreateDialog.value = true;
       },
       // 删除该行
       handleDeleteRow: (data: Pages.DiaryYears.SlotScope) => {
