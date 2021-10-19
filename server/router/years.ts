@@ -1,7 +1,8 @@
 import Router from 'koa-router';
 import type { Server } from '/@types/server';
-import { setSuccessedBody, setFailedBody, setFailedBodySearch, validateRequiredFields } from './common.js';
+import { setSuccessedBody, setFailedBody, setFailedBodySearch, validateRequiredFields } from './tools/common.js';
 import { v4 } from 'uuid';
+import { formatParams } from './tools/util.js';
 
 const router = new Router();
 
@@ -32,17 +33,26 @@ const list: Server.YearsPlanRow[] = [
 router
   // 查询
   .get('/list', async (ctx) => {
-    const year = Number(ctx.query.year) ?? '';
-    const months = new Set(ctx.query.months ? ((ctx.query.months as string).split(',').map(it => +it)) : []);
-    const keyword = (ctx.query.keyword ?? '') as string;
+    const { year, months, keyword, onlyUnassigned } = formatParams(ctx.query, {
+      year: 'number',
+      months: 'array-number',
+      keyword: 'string',
+      onlyUnassigned: 'number',
+    });
 
+    const monthsSet = new Set(months as number[]);
+
+    // TODO 使用数据库
     const data = list.filter(item => {
       let flag = item.year === year;
-      if(flag && months.size) {
-        flag = flag && !!item.months?.some(it => months.has(it));
+      if(flag && monthsSet.size && !onlyUnassigned) {
+        flag = flag && !!item.months?.some(it => monthsSet.has(it));
+      }
+      if(onlyUnassigned) {
+        flag = flag && !item.months?.length;
       }
       if(flag && keyword) {
-        flag = flag && !!item.desc?.includes(keyword);
+        flag = flag && !!item.desc?.includes(keyword as string);
       }
       return flag;
     });
@@ -56,6 +66,7 @@ router
   .post('/list', async (ctx) => {
     const data = (ctx.request.body) as Server.YearsPlanRowRequest;
     if(validateRequiredFields(ctx, data, ['year', 'desc'])) {
+      // TODO 使用数据库
       list.push({
         year: data.year,
         desc: data.desc,
@@ -70,6 +81,7 @@ router
     const item = list.find(it => it.id === ctx.params.id);
     if(item) {
       const reqBody = ctx.request.body;
+      // TODO 使用数据库
       item.desc = reqBody.desc ?? '';
       item.months = reqBody.months ?? [];
       item.year = reqBody.year ?? '';
@@ -80,13 +92,14 @@ router
   })
   // 删除
   .delete('/list/:id', async (ctx) => {
-    const index = list.findIndex(it => it.id === ctx.params.id);
-    if(index > -1) {
-      list.splice(index, 1);
-      setSuccessedBody(ctx);
-    } else {
-      setFailedBodySearch(ctx);
-    }
+    const set = new Set(ctx.params.id.split(','));
+
+    // TODO 使用数据库
+    const temp = [...list].filter(it => !set.has(it.id));
+    list.length = 0;
+    list.push(...temp);
+
+    setSuccessedBody(ctx);
   });
 
 export default router;

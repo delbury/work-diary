@@ -52,11 +52,7 @@
       :height="tableHeight"
       row-key="id"
     >
-      <el-table-column
-        type="selection"
-        width="50"
-      >
-      </el-table-column>
+      <el-table-column type="selection" width="50"></el-table-column>
 
       <el-table-column
         width="70"
@@ -96,12 +92,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        type="index"
-        width="50"
-        label="序号"
-      >
-      </el-table-column>
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
+      <el-table-column width="50" label="年度"></el-table-column>
+      <el-table-column width="50" label="月份"></el-table-column>
 
       <el-table-column
         type="expand"
@@ -134,7 +127,7 @@
       </el-table-column>
 
       <el-table-column
-        width="180"
+        width="240"
         label="选择周"
         prop="week"
         show-overflow-tooltip
@@ -156,6 +149,7 @@
             class="full-w"
             multiple
             collapse-tags
+            clearable
           >
             <el-option
               v-for="it in weeksOptions"

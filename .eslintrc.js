@@ -109,5 +109,15 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'vue/max-attributes-per-line': ['warn', {
+      singleline: {
+        max: 4,
+        allowFirstLine: true,
+      },
+      multiline: {
+        max: 1,
+        allowFirstLine: false,
+      },
+    }],
   },
 };

@@ -46,6 +46,7 @@
             v-model="searchForm.onlyUnassigned"
             :true-label="1"
             :false-label="0"
+            @change="fetchList"
           >
             仅看未分配
           </el-checkbox>
@@ -66,10 +67,12 @@
     </el-form>
 
     <el-table
+      v-loading="fetching"
       class="flex-box border-t"
       :data="tableData"
       :height="tableHeight"
       row-key="id"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
         type="selection"
@@ -92,12 +95,20 @@
           ></el-button>
 
           <!-- 批量删除 -->
-          <el-button
-            class="btn-inline"
-            circle
-            type="danger"
-            icon="el-icon-delete"
-          ></el-button>
+          <el-popconfirm
+            title="是否删除所选项"
+            @confirm="handleDeleteRows"
+          >
+            <template #reference>
+              <el-button
+                class="btn-inline"
+                circle
+                type="danger"
+                icon="el-icon-delete"
+                :disabled="!selections.length || fetching"
+              ></el-button>
+            </template>
+          </el-popconfirm>
         </template>
 
         <template #default="data">
@@ -110,9 +121,10 @@
             :icon="data.row._editing ? 'el-icon-check' : 'el-icon-edit-outline'"
             @click="() => {
               if(data.row._editing) {
-                updateYearPlan(data.row)
+                updateYearPlan(data.row, () => (data.row._editing = !data.row._editing));
+              } else {
+                data.row._editing = !data.row._editing;
               }
-              data.row._editing = !data.row._editing;
             }"
           ></el-button>
           <!-- 删除 -->
@@ -202,6 +214,7 @@
     </el-table>
 
     <CreateDialog
+      v-if="visibleCreateDialog"
       v-model="visibleCreateDialog"
       @on-done="fetchList"
     ></CreateDialog>
@@ -224,6 +237,7 @@ import { uniqueIdGenerator } from '/@/lib/util';
 import api from '/@/api';
 import { useTableHeight, useNavbarChange } from '/@/pages/common/mixins';
 import CreateDialog from './create-dialog.vue';
+import { ElMessage } from 'element-plus';
 
 export default defineComponent({
   components: { CreateDialog },
@@ -232,6 +246,7 @@ export default defineComponent({
     const that = getCurrentInstance(); // 实例
     const monthOptions = reactive([...MONTHS]);
     const tableData = reactive<Pages.DiaryYears.TableDataRows>([]);
+    const selections = ref<Pages.DiaryYears.TableDataRows>([]);
 
     // 搜索条件
     const searchForm = reactive({
@@ -242,17 +257,20 @@ export default defineComponent({
     });
 
     const [refWrapper, tableHeight] = useTableHeight();
+    const fetching = ref(false);
 
     // 查询年计划列表
     const fetchList = () => {
+      fetching.value = true;
       api.searchYearPlans({
         year: store.state.navbar.year?.getFullYear(),
         months: searchForm.months.join(','),
         keyword: searchForm.keyword,
+        onlyUnassigned: searchForm.onlyUnassigned,
       }).then((res) => {
         tableData.length = 0;
         tableData.push(...res.data.body?.data || []);
-      });
+      }).finally(() => (fetching.value = false));
     };
     fetchList();
 
@@ -262,8 +280,13 @@ export default defineComponent({
     });
 
     // 更新年计划
-    const updateYearPlan = (data: Pages.DiaryYears.TableDataRow) => {
+    const updateYearPlan = (data: Pages.DiaryYears.TableDataRow, cb?: () => void) => {
+      if(!data.desc?.trim()) {
+        ElMessage.warning('目标项不能为空');
+        return;
+      }
       api.updateYearPlan(data.id, data);
+      cb?.();
     };
 
     // 创建弹框
@@ -278,22 +301,15 @@ export default defineComponent({
       monthOptions,
       refWrapper,
       tableHeight,
+      fetching,
       // 表格序号，自定义（临时处理 el-table 的 bug）
       indexMethod: (data: Pages.DiaryYears.SlotScope) => {
         if(data.$index > -1) {
           return tableData.findIndex(it => it === data.row) + 1;
         }
       },
-      // 添加一行
+      // 添加
       handleAddRow: () => {
-        // 行内添加
-        // tableData.push({
-        //   id: uniqueIdGenerator(),
-        //   desc: '',
-        //   months: [],
-        //   _editing: true,
-        //   year: (store.state.navbar.year ?? new Date()).getFullYear(),
-        // });
         visibleCreateDialog.value = true;
       },
       // 删除该行
@@ -307,6 +323,22 @@ export default defineComponent({
             tableData.splice(index, 1);
           }
         }).catch(() => null);
+      },
+      // 选择项
+      selections,
+      // 选择项改变
+      handleSelectionChange: (selection: Pages.DiaryYears.TableDataRows) => {
+        selections.value = selection;
+      },
+      // 批量删除所选项
+      handleDeleteRows: async() => {
+        try {
+          fetching.value = true;
+          const res = await api.deleteYearPlan(selections.value.map(it => it.id).join(','));
+          fetchList();
+        } finally {
+          fetching.value = false;
+        }
       },
     };
   },

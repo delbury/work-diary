@@ -25,7 +25,10 @@ import {
   ElCalendar,
   ElTooltip,
   ElDialog,
+  ElLoading,
+  ElPopconfirm,
 } from 'element-plus';
+import {} from 'element-plus/es';
 // import lang from 'element-plus/lib/locale/lang/zh-cn';
 // import 'dayjs/locale/zh-cn';
 // locale(lang);
@@ -54,6 +57,8 @@ const Coms = [
   ElCalendar,
   ElTooltip,
   ElDialog,
+  ElLoading,
+  ElPopconfirm,
 ];
 
 const plugin: Plugin = {

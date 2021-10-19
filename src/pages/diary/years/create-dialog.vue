@@ -9,18 +9,24 @@
       ref="formRef"
       :model="formModel"
       label-width="100px"
+      :rules="formRules"
     >
       <el-form-item
         label="任务年度"
-        required
+        prop="year"
       >
         <el-date-picker
           v-model="formModel.year"
           type="year"
+          placeholder="请选择任务年度"
+          :clearable="false"
         ></el-date-picker>
       </el-form-item>
 
-      <el-form-item label="指定月份">
+      <el-form-item
+        label="指定月份"
+        prop="months"
+      >
         <comp-select
           v-model="formModel.months"
           :options="monthOptions"
@@ -30,7 +36,7 @@
 
       <el-form-item
         label="目标项"
-        required
+        prop="desc"
       >
         <el-input
           v-model="formModel.desc"
@@ -51,6 +57,7 @@ import type { Server } from '/@types/server';
 import { ElForm } from 'element-plus';
 import { MONTHS } from '/@/lib/const';
 import api from '/@/api';
+import { FormRulesMap } from 'element-plus/es/el-form/src/form.type';
 
 type ElFormInstance = InstanceType<typeof ElForm>
 
@@ -89,11 +96,16 @@ export default defineComponent({
       });
     };
 
+    const formRules: FormRulesMap = {
+      desc: { required: true, message: '请输入计划详情' },
+    };
+
     return {
       formModel,
       formRef,
       monthOptions,
       submit,
+      formRules,
     };
   },
 });
